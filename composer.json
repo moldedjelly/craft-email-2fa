@@ -41,6 +41,13 @@
         "hasCpSettings": true,
         "hasCpSection": false,
         "changelogUrl": "https://github.com/kodal-uk/craft-email-2fa/blob/master/CHANGELOG.md",
+        "components": {
+            "auth": "Kodal\\Email2FA\\Services\\Auth",
+            "cookie": "Kodal\\Email2FA\\Services\\Cookie",
+            "email": "Kodal\\Email2FA\\Services\\Email",
+            "storage": "Kodal\\Email2FA\\Services\\Storage",
+            "verify": "Kodal\\Email2FA\\Services\\Verify"
+        },
         "class": "Kodal\\Email2FA\\Plugin"
     }
 }
