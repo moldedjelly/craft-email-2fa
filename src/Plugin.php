@@ -54,8 +54,6 @@ class Plugin extends \craft\base\Plugin
         parent::init();
         self::$plugin = $this;
 
-        Craft::$app->view->registerTwigExtension(new RequireTwoFactorLogin());
-
         $this->setComponents([
             'auth'    => Auth::class,
             'verify'  => Verify::class,
@@ -63,6 +61,8 @@ class Plugin extends \craft\base\Plugin
             'cookie' => Cookie::class,
             'storage' => Storage::class,
         ]);
+
+        Craft::$app->view->registerTwigExtension(new RequireTwoFactorLogin());
 
         Event::on(
             CraftVariable::class,
