@@ -53,8 +53,8 @@ class Auth
         $auth = Plugin::$plugin->cookie->get('auth');
         $hash = Plugin::$plugin->storage->get('hash');
 
-        LogToFile::info('Auth - isLoggedIn() - auth: '.print_r($auth, true), 'Email2FA');
-        LogToFile::info('Auth - isLoggedIn() - hash: '.print_r($hash, true), 'Email2FA');
+        // LogToFile::info('Auth - isLoggedIn() - auth: '.print_r($auth, true), 'Email2FA');
+        // LogToFile::info('Auth - isLoggedIn() - hash: '.print_r($hash, true), 'Email2FA');
 
         return is_string($auth) && is_string($hash) && !empty($auth) && !empty($hash) && $auth === $hash;
     }
@@ -68,10 +68,10 @@ class Auth
     public function login($event)
     {
         if (!$this->isLoggedIn()) {
-            LogToFile::info('Auth - not isLoggedIn', 'Email2FA');
+            // LogToFile::info('Auth - not isLoggedIn', 'Email2FA');
             $this->triggerAuthChallenge();
         } else {
-            LogToFile::info('Auth - isLoggedIn', 'Email2FA');
+            // LogToFile::info('Auth - isLoggedIn', 'Email2FA');
         }
 
         // if (!$this->simulateVerification()) {

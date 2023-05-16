@@ -2,8 +2,8 @@
 
 namespace Kodal\Email2FA\TwigExtensions;
 
-use Craft;
 use Kodal\Email2FA\Services\Auth;
+use Craft;
 
 
 /**
