@@ -3,6 +3,7 @@
 namespace Kodal\Email2FA\services;
 
 use Craft;
+use craft\helpers\App;
 use craft\web\View;
 use Kodal\Email2FA\Plugin;
 use craft\mail\Message;
@@ -44,7 +45,7 @@ class Email
         $html = $this->generateEmailHtml(['verifyLink' => $verifyLink]);
 
         $message = new Message();
-        $message->setFrom([$settings['fromEmail'] => $settings['fromName']]);
+        $message->setFrom([App::parseEnv($settings['fromEmail']) => App::parseEnv($settings['fromName'])]);
         $message->setSubject(Craft::t('email-2fa', 'Verify login attempt'));
         $message->setHtmlBody($html);
         $message->setTo($identity->email);

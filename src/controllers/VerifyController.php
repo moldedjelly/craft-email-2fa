@@ -5,6 +5,7 @@ namespace Kodal\Email2FA\controllers;
 use Craft;
 use craft\web\Controller;
 use Kodal\Email2FA\Plugin;
+use craft\helpers\App;
 
 class VerifyController extends Controller
 {
@@ -16,12 +17,14 @@ class VerifyController extends Controller
     /**
      * @var \craft\web\Response|\yii\console\Response
      */
-    private $response;
+    public $response;
 
     /**
      * @var bool|\craft\base\Model|null
      */
     private $settings;
+
+    protected $allowAnonymous = ['index', 'hash'];
 
     /**
      * VerifyController constructor.
@@ -36,7 +39,7 @@ class VerifyController extends Controller
     {
         $this->settings = Plugin::$plugin->getSettings();
         $this->session  = Craft::$app->getSession();
-        $this->response = craft::$app->response;
+        $this->response = Craft::$app->response;
 
         parent::__construct($id, $module, $config);
     }
@@ -49,25 +52,42 @@ class VerifyController extends Controller
         $this->requirePostRequest();
 
         $request    = Craft::$app->getRequest();
-        $verifyCode = $request->getBodyParam('verifyCode');
+        $verifyCode = str_split($request->getBodyParam('verifyCode'));
 
         $verified = $this->verify($verifyCode);
 
-        if ($verified) {
-            $config = Craft::$app->getConfig();
-            $user = Craft::$app->getUser();
-            $this->session->setNotice(Craft::t('email-2fa', 'Logged in.'));
+        // added by Matj
+        $config = Craft::$app->getConfig()->getGeneral();
+        $siteUrl = $config->aliases['@primarySiteUrl'];
 
-            if(Craft::$app->getSession()->get('firstTimeLogin')) {
-                return $this->redirect($config->general->activateAccountSuccessPath);
+        if ($verified) {
+            $user = Craft::$app->getUser();
+            // $this->session->setNotice(Craft::t('email-2fa', 'Logged in.'));
+
+            // if(Craft::$app->getSession()->get('firstTimeLogin')) {
+            //     return $this->redirect($config->general->activateAccountSuccessPath);
+            // }
+
+            // return $this->redirect($user->getReturnUrl());
+
+            // added by Matj
+            if ($request->getAcceptsJson()) {
+                return $this->asJson(['success' => true]);
+            } else {
+                return $this->redirect($siteUrl.'account/auth-verify');
             }
 
-            return $this->redirect($user->getReturnUrl());
-
         } else {
-            $this->session->setError(Craft::t('email-2fa', 'Verification failed.'));
+            // $this->session->setError(Craft::t('email-2fa', 'Verification failed.'));
 
-            return $this->redirect($this->settings->verifyRoute);
+            // return $this->redirect($this->settings->verifyRoute);
+
+            // added by Matj
+            if ($request->getAcceptsJson()) {
+                return $this->asJson(['error' => 'That code is invalid']);
+            } else {
+                return $this->redirect($siteUrl.'account/auth-verify?failed=1');
+            }
         }
     }
 
@@ -90,21 +110,30 @@ class VerifyController extends Controller
         $verifyCode = Plugin::$plugin->storage->get('verify');
         $verified   = $this->verify($verifyCode);
 
+        // added by Matj
+        $config = Craft::$app->getConfig()->getGeneral();
+        $siteUrl = $config->aliases['@primarySiteUrl'];
+
         if ($verified) {
-            $config = Craft::$app->getConfig();
             $user = Craft::$app->getUser();
-            $this->session->setNotice(Craft::t('email-2fa', 'Logged in.'));
+            // $this->session->setNotice(Craft::t('email-2fa', 'Logged in.'));
 
-            if(Craft::$app->getSession()->get('firstTimeLogin')) {
-                return $this->redirect($config->general->activateAccountSuccessPath);
-            }
+            // if(Craft::$app->getSession()->get('firstTimeLogin')) {
+            //     return $this->redirect($config->general->activateAccountSuccessPath);
+            // }
 
-            return $this->redirect($user->getReturnUrl());
+            // return $this->redirect($user->getReturnUrl());
+
+            // added by Matj
+            return $this->redirect($siteUrl.'account/auth-verify');
 
         } else {
-            $this->session->setError(Craft::t('email-2fa', 'Verification failed.'));
+            // $this->session->setError(Craft::t('email-2fa', 'Verification failed.'));
 
-            return $this->redirect($this->settings->verifyRoute);
+            // return $this->redirect($this->settings->verifyRoute);
+
+            // added by Matj
+            return $this->redirect($siteUrl.'account/auth-verify?failed=1');
         }
     }
 

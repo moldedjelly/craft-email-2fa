@@ -3,6 +3,7 @@
 namespace Kodal\Email2FA\Services;
 
 use Kodal\Email2FA\Plugin;
+use Craft;
 
 class Cookie {
 
@@ -35,6 +36,10 @@ class Cookie {
         $c = new \yii\web\Cookie($options);
         $c->name = $this->getStorageKey($key);
         $c->value = $value;
+
+        $generalConfig = Craft::$app->getConfig()->getGeneral();
+        $c->domain = $generalConfig->defaultCookieDomain;
+        $c->secure = $generalConfig->useSecureCookies;
 
         return setcookie($c->name, $c->value, $c->expire, $c->path, $c->domain, $c->secure, $c->httpOnly);
     }

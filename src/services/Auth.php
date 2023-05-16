@@ -4,6 +4,7 @@ namespace Kodal\Email2FA\Services;
 
 use Craft;
 use Kodal\Email2FA\Plugin;
+use putyourlightson\logtofile\LogToFile;
 
 /**
  * Class Auth
@@ -52,6 +53,9 @@ class Auth
         $auth = Plugin::$plugin->cookie->get('auth');
         $hash = Plugin::$plugin->storage->get('hash');
 
+        LogToFile::info('Auth - isLoggedIn() - auth: '.print_r($auth, true), 'Email2FA');
+        LogToFile::info('Auth - isLoggedIn() - hash: '.print_r($hash, true), 'Email2FA');
+
         return is_string($auth) && is_string($hash) && !empty($auth) && !empty($hash) && $auth === $hash;
     }
 
@@ -64,12 +68,16 @@ class Auth
     public function login($event)
     {
         if (!$this->isLoggedIn()) {
-           return $this->triggerAuthChallenge();
+            LogToFile::info('Auth - not isLoggedIn', 'Email2FA');
+            $this->triggerAuthChallenge();
+        } else {
+            LogToFile::info('Auth - isLoggedIn', 'Email2FA');
         }
 
-        if (!$this->simulateVerification()) {
-            return $this->triggerAuthChallenge();
-        }
+        // if (!$this->simulateVerification()) {
+        //     LogToFile::info('not simulateVerification', 'Email2FA');
+        //     $this->triggerAuthChallenge();
+        // }
     }
 
     /**
@@ -100,7 +108,7 @@ class Auth
     {
         Plugin::$plugin->verify->triggerAuthChallenge();
 
-        return $this->response->redirect($this->settings->verifyRoute);
+        // return $this->response->redirect($this->settings->verifyRoute);
     }
 
     /**
