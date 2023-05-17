@@ -1,6 +1,6 @@
 <?php
 
-namespace Kodal\Email2FA\Services;
+namespace Kodal\Email2FA\services;
 
 use craft\helpers\FileHelper;
 

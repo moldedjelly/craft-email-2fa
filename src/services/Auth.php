@@ -1,6 +1,6 @@
 <?php
 
-namespace Kodal\Email2FA\Services;
+namespace Kodal\Email2FA\services;
 
 use Craft;
 use Kodal\Email2FA\Plugin;
@@ -8,7 +8,7 @@ use putyourlightson\logtofile\LogToFile;
 
 /**
  * Class Auth
- * @package Kodal\Email2FA\Services
+ * @package Kodal\Email2FA\services
  */
 class Auth
 {
